@@ -1076,6 +1076,93 @@
             color: var(--text);
         }
 
+        /* PROJECT WEIGHT CALCULATOR STYLES */
+        .project-weight-calculator {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--secondary);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .project-weight-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .project-weight-header i {
+            color: var(--accent);
+        }
+
+        .project-weight-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .weight-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .weight-input-group label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .weight-input-group input,
+        .weight-input-group select {
+            padding: 10px 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .weight-input-group input:focus,
+        .weight-input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .project-weight-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+        }
+
+        .weight-result-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--input-bg);
+            border-radius: 8px;
+        }
+
+        .weight-result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .weight-result-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
@@ -1151,6 +1238,14 @@
             }
 
             .weight-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .project-weight-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .project-weight-results {
                 grid-template-columns: 1fr;
             }
         }
@@ -1424,12 +1519,82 @@
             <div class="detail-grid" id="modalContent">
                 <!-- Details will be populated here -->
             </div>
+            
+            <!-- PROJECT WEIGHT CALCULATOR -->
+            <div class="project-weight-calculator" id="projectWeightCalculator">
+                <div class="project-weight-header">
+                    <i class="fas fa-calculator"></i>
+                    <span>Project Weight Calculator</span>
+                </div>
+                
+                <div class="project-weight-controls">
+                    <div class="weight-input-group">
+                        <label for="materialType">Material Type</label>
+                        <select id="materialType">
+                            <option value="steel">Steel</option>
+                            <option value="aluminum">Aluminum</option>
+                            <option value="stainless">Stainless Steel</option>
+                            <option value="copper">Copper</option>
+                        </select>
+                    </div>
+                    
+                    <div class="weight-input-group">
+                        <label for="thickness">Thickness (mm)</label>
+                        <input type="number" id="thickness" placeholder="Enter thickness" step="0.1" min="0.1">
+                    </div>
+                    
+                    <div class="weight-input-group">
+                        <label for="width">Width (mm)</label>
+                        <input type="number" id="width" placeholder="Enter width" step="1" min="1">
+                    </div>
+                    
+                    <div class="weight-input-group">
+                        <label for="height">Height (mm)</label>
+                        <input type="number" id="height" placeholder="Enter height" step="1" min="1">
+                    </div>
+                    
+                    <div class="weight-input-group">
+                        <label for="depth">Depth (mm)</label>
+                        <input type="number" id="depth" placeholder="Enter depth" step="1" min="1">
+                    </div>
+                    
+                    <div class="weight-input-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" placeholder="Enter quantity" value="1" min="1">
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 15px 0;">
+                    <button class="btn" id="calculateWeight">
+                        <i class="fas fa-calculator"></i> Calculate Weight
+                    </button>
+                </div>
+                
+                <div class="project-weight-results" id="weightResults" style="display: none;">
+                    <div class="weight-result-item">
+                        <div class="weight-result-value" id="resultWeight">0 kg</div>
+                        <div class="weight-result-label">Total Weight</div>
+                    </div>
+                    <div class="weight-result-item">
+                        <div class="weight-result-value" id="resultVolume">0 m³</div>
+                        <div class="weight-result-label">Volume</div>
+                    </div>
+                    <div class="weight-result-item">
+                        <div class="weight-result-value" id="resultDensity">0 kg/m³</div>
+                        <div class="weight-result-label">Material Density</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="closeDetail">
                     <i class="fas fa-times"></i> Close
                 </button>
                 <button class="btn" id="downloadPDF">
                     <i class="fas fa-file-pdf"></i> Download as PDF
+                </button>
+                <button class="btn" id="downloadWeightPDF" style="display: none;">
+                    <i class="fas fa-weight"></i> Download Weight Report
                 </button>
             </div>
         </div>
@@ -1482,6 +1647,14 @@
         // Google Custom Search API Configuration
         const GOOGLE_API_KEY = "AIzaSyCYbA1yTP34iJCm8i1FHVoewzBAyVwT_BE";
         const SEARCH_ENGINE_ID = "943067b35d3ac4223";
+
+        // Material densities (kg/m³)
+        const materialDensities = {
+            steel: 7850,
+            aluminum: 2700,
+            stainless: 8000,
+            copper: 8960
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -1583,6 +1756,21 @@
         const clearAllBtn = document.getElementById('clearAllBtn');
         const searchStatus = document.getElementById('searchStatus');
 
+        // Project Weight Calculator Elements
+        const projectWeightCalculator = document.getElementById('projectWeightCalculator');
+        const materialType = document.getElementById('materialType');
+        const thickness = document.getElementById('thickness');
+        const width = document.getElementById('width');
+        const height = document.getElementById('height');
+        const depth = document.getElementById('depth');
+        const quantity = document.getElementById('quantity');
+        const calculateWeight = document.getElementById('calculateWeight');
+        const weightResults = document.getElementById('weightResults');
+        const resultWeight = document.getElementById('resultWeight');
+        const resultVolume = document.getElementById('resultVolume');
+        const resultDensity = document.getElementById('resultDensity');
+        const downloadWeightPDF = document.getElementById('downloadWeightPDF');
+
         // Weight Search Modal Elements
         const weightSearchModal = document.getElementById('weightSearchModal');
         const searchItemName = document.getElementById('searchItemName');
@@ -1638,6 +1826,10 @@
             useManualWeight.addEventListener('click', applyManualWeight);
             closeWeightModal.addEventListener('click', hideWeightSearchModal);
             
+            // Project Weight Calculator Event Listeners
+            calculateWeight.addEventListener('click', calculateProjectWeight);
+            downloadWeightPDF.addEventListener('click', generateWeightPDF);
+            
             // Close modals when clicking outside
             detailModal.addEventListener('click', function(e) {
                 if (e.target === detailModal) {
@@ -1663,7 +1855,178 @@
             });
         });
 
-        // WEIGHT CALCULATOR FUNCTIONS
+        // PROJECT WEIGHT CALCULATOR FUNCTIONS
+        function calculateProjectWeight() {
+            const material = materialType.value;
+            const t = parseFloat(thickness.value);
+            const w = parseFloat(width.value);
+            const h = parseFloat(height.value);
+            const d = parseFloat(depth.value);
+            const qty = parseInt(quantity.value) || 1;
+            
+            // Validate inputs
+            if (!t || !w || !h || !d) {
+                alert('Please enter all dimensions');
+                return;
+            }
+            
+            // Calculate volume in cubic meters
+            const volume = (t * w * h * d) / 1000000000; // Convert from mm³ to m³
+            
+            // Get material density
+            const density = materialDensities[material];
+            
+            // Calculate weight
+            const weight = volume * density * qty;
+            
+            // Display results
+            resultWeight.textContent = `${weight.toFixed(2)} kg`;
+            resultVolume.textContent = `${volume.toFixed(6)} m³`;
+            resultDensity.textContent = `${density} kg/m³`;
+            
+            // Show results
+            weightResults.style.display = 'grid';
+            downloadWeightPDF.style.display = 'flex';
+            
+            // Store calculation data for PDF generation
+            currentDetailData.weightCalculation = {
+                material,
+                thickness: t,
+                width: w,
+                height: h,
+                depth: d,
+                quantity: qty,
+                volume,
+                density,
+                weight
+            };
+        }
+
+        function generateWeightPDF() {
+            if (!currentDetailData || !currentDetailData.weightCalculation) {
+                alert('No weight calculation data available');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const calc = currentDetailData.weightCalculation;
+            
+            // Set document properties
+            doc.setProperties({
+                title: `Weight Calculation - ${currentDetailData.project || 'Unknown'}`,
+                subject: 'Weight Calculation Report',
+                author: 'Electro Metal Pressing (Pvt) Ltd',
+                keywords: 'weight, calculation, project, material',
+                creator: 'EMP Dashboard'
+            });
+            
+            // Add company header with logo
+            doc.setFillColor(229, 57, 53);
+            doc.rect(0, 0, 210, 30, 'F');
+            
+            // Add logo
+            const logoImg = new Image();
+            logoImg.src = 'emp.png';
+            
+            // Add logo and company name
+            try {
+                doc.addImage(logoImg, 'PNG', 10, 5, 20, 20);
+            } catch (e) {
+                console.log("Logo not found, using text fallback");
+                doc.setFillColor(255, 255, 255);
+                doc.rect(10, 5, 20, 20, 'F');
+                doc.setTextColor(229, 57, 53);
+                doc.setFontSize(10);
+                doc.text('EMP', 20, 17, { align: 'center' });
+            }
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.text('Electro Metal Pressing (Pvt) Ltd', 105, 15, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text('Weight Calculation Report', 105, 22, { align: 'center' });
+            
+            // Reset text color
+            doc.setTextColor(0, 0, 0);
+            
+            // Add project details
+            let yPosition = 40;
+            
+            // Project header
+            doc.setFillColor(240, 240, 240);
+            doc.rect(14, yPosition, 182, 10, 'F');
+            doc.setTextColor(229, 57, 53);
+            doc.setFontSize(14);
+            doc.text(`${currentDetailData.project || 'Project'} - ${currentDetailData.customer || 'Customer'}`, 105, yPosition + 7, { align: 'center' });
+            yPosition += 20;
+            
+            // Calculation details
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.text('Weight Calculation Details', 14, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(10);
+            doc.text(`Material Type: ${calc.material.charAt(0).toUpperCase() + calc.material.slice(1)}`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Thickness: ${calc.thickness} mm`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Width: ${calc.width} mm`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Height: ${calc.height} mm`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Depth: ${calc.depth} mm`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Quantity: ${calc.quantity}`, 14, yPosition);
+            yPosition += 10;
+            
+            // Calculation results
+            doc.setFontSize(12);
+            doc.text('Calculation Results', 14, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(10);
+            doc.text(`Volume: ${calc.volume.toFixed(6)} m³`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Material Density: ${calc.density} kg/m³`, 14, yPosition);
+            yPosition += 6;
+            doc.text(`Total Weight: ${calc.weight.toFixed(2)} kg`, 14, yPosition);
+            yPosition += 10;
+            
+            // Formula explanation
+            doc.setFontSize(12);
+            doc.text('Calculation Formula', 14, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(9);
+            const formulaText = [
+                'Weight = Volume × Density × Quantity',
+                'Volume = Thickness × Width × Height × Depth',
+                'All dimensions in meters for calculation'
+            ];
+            
+            formulaText.forEach(line => {
+                doc.text(line, 14, yPosition);
+                yPosition += 5;
+            });
+            
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
+                doc.text('Electro Metal Pressing (Pvt) Ltd - Weight Calculation', 105, 295, { align: 'center' });
+            }
+            
+            // Save the PDF
+            const fileName = `Weight_Calculation_${currentDetailData.project || 'Unknown'}.pdf`;
+            doc.save(fileName);
+        }
+
+        // [Previous WEIGHT CALCULATOR FUNCTIONS remain exactly the same]
         function addWeightItem() {
             const name = itemName.value.trim();
             const model = itemModel.value.trim();
@@ -2372,8 +2735,33 @@
             
             modalContent.appendChild(additionalCard);
             
+            // Reset weight calculator
+            resetWeightCalculator();
+            
             // Show the modal
             detailModal.style.display = 'flex';
+        }
+
+        // Reset weight calculator
+        function resetWeightCalculator() {
+            thickness.value = '';
+            width.value = '';
+            height.value = '';
+            depth.value = '';
+            quantity.value = '1';
+            weightResults.style.display = 'none';
+            downloadWeightPDF.style.display = 'none';
+            
+            // Pre-fill dimensions if available in project data
+            if (currentDetailData.width) {
+                width.value = currentDetailData.width;
+            }
+            if (currentDetailData.height) {
+                height.value = currentDetailData.height;
+            }
+            if (currentDetailData.depth) {
+                depth.value = currentDetailData.depth;
+            }
         }
 
         // Create a detail card
